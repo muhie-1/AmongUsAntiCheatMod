@@ -1,25 +1,24 @@
-# Among Us Anti-Cheat Plugin
+# Among Us Anti-Cheat Mod
 
-![License](https://img.shields.io/badge/license-MIT-green.svg)
-![Game Version](https://img.shields.io/badge/Among%20Us-v2024.x-blue.svg)
+A lightweight, open-source anti-cheat plugin for Among Us built with **.NET 6.0**, **BepInEx 6**, and **HarmonyLib**. Designed to detect and prevent common exploits and game-breaking cheats in lobbies.
 
-An open-source anti-cheat detection mod for **Among Us** built with **BepInEx (IL2CPP)** and **HarmonyLib**.
+## 🚀 Features
 
-## Features
+*   **Speed Detection:** Identifies players moving beyond the maximum allowed speed limits.
+*   **Noclip Detection:** Prevents players from walking through walls and unauthorized boundaries.
+*   **Cooldown Detection:** Catches abnormal or zero kill/ability cooldown manipulations.
+*   **Task Cheat Detection:** Monitors and flags invalid task completions.
+*   **Vent Detection:** Tracks unauthorized or impossible vent entries and movements.
 
-- **Speed Hack Detection:** Monitors player velocity in real-time and flags abnormal speed bursts.
-- **Unauthorized Kill Detection:** Prevents non-impostor players from triggering kill actions.
-- **Console Logging:** Outputs security warnings directly to the BepInEx debug console.
+## 🛠️ Tech Stack
 
-## Installation
+*   **.NET 6.0**
+*   **BepInEx 6** (Modding Framework)
+*   **HarmonyLib** (Runtime Method Patching)
 
-1. Download and install [BepInEx 6 (IL2CPP build)](https://github.com/BepInEx/BepInEx) into your Among Us root directory.
-2. Download the latest `AmongUsAntiCheat.dll` release from this repository.
-3. Place `AmongUsAntiCheat.dll` inside the `Among Us/BepInEx/plugins/` directory.
+## 📦 Installation
+
+1. Ensure you have **BepInEx 6** properly installed in your Among Us game directory.
+2. Download the latest release `.dll` or build the project from source.
+3. Drop the compiled plugin DLL into your `BepInEx/plugins` folder.
 4. Launch the game.
-
-## Building from Source
-
-1. Clone the repository:
-   ```bash
-   git clone [https://github.com/your-username/AmongUsAntiCheat.git](https://github.com/your-username/AmongUsAntiCheat.git)
