@@ -1,0 +1,6 @@
+<Project>
+  <PropertyGroup>
+    <!-- Copy to Game.props in the repository root and use the folder found in Epic's Manage menu. -->
+    <GameDir>C:/Program Files/Epic Games/AmongUs</GameDir>
+  </PropertyGroup>
+</Project>

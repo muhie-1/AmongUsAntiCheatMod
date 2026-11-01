@@ -1,15 +1,17 @@
 <#
 .SYNOPSIS
-Builds a plugin ZIP from Steam reference packages or a local game installation.
+Builds a plugin ZIP from shared Windows reference packages or a local game installation.
 .EXAMPLE
 .\scripts\Build-Release.ps1 -Store Steam -GameDir 'D:\SteamLibrary\steamapps\common\Among Us'
 .EXAMPLE
 .\scripts\Build-Release.ps1 -Store Steam
+.EXAMPLE
+.\scripts\Build-Release.ps1 -Store EpicGames
 #>
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)]
-    [ValidateSet('Steam', 'MicrosoftStore')]
+    [ValidateSet('Steam', 'MicrosoftStore', 'EpicGames')]
     [string]$Store,
 
     [string]$GameDir
@@ -17,11 +19,15 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent $PSScriptRoot
-$packageSteam = $Store -eq 'Steam' -and [string]::IsNullOrWhiteSpace($GameDir)
-if ($packageSteam) {
+$packageWindows = $Store -in @('Steam', 'EpicGames') -and [string]::IsNullOrWhiteSpace($GameDir)
+if ($packageWindows) {
     $projectPath = Join-Path $repoRoot 'src/AntiCheat.Steam/AntiCheat.Steam.csproj'
     $referenceInfo = 'Built against AmongUs.GameLibs.Steam 2026.9.29 using generated interop references.'
-    $targetInfo = 'Target: Among Us Steam 2026.9.29 on Windows x64. Use the x64 Unity IL2CPP loader.'
+    if ($Store -eq 'EpicGames') {
+        $targetInfo = 'Target: Epic Games Windows 2026.9.29 compatibility candidate. Steam references were used; Epic assembly compatibility and runtime behavior are UNVERIFIED. Match the loader to your executable architecture.'
+    } else {
+        $targetInfo = 'Target: Among Us Steam 2026.9.29 on Windows x64. Use the x64 Unity IL2CPP loader.'
+    }
     $buildProperties = @()
 } else {
     if ([string]::IsNullOrWhiteSpace($GameDir)) { throw 'GameDir is required for MicrosoftStore builds.' }
@@ -79,7 +85,7 @@ Compilation does not establish in-game compatibility or detection accuracy.
    Look for the Anti Cheat panel. Movement checks start during the match.
 
 Keep automatic kicking off during testing. Guest mode only shows local warnings.
-See README.md for Steam and Microsoft Store setup and troubleshooting.
+See README.md for Steam, Epic Games, and Microsoft Store setup and troubleshooting.
 To uninstall, close the game and remove BepInEx/plugins/AntiCheat/.
 Game assemblies and the BepInEx loader are not included.
 "@

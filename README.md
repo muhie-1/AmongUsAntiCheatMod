@@ -1,8 +1,8 @@
 # Among Us Anti Cheat
 
-A movement-monitoring mod for hosts and guests on Windows Among Us, with installation and build instructions for Steam and Microsoft Store. Requires a compatible BepInEx IL2CPP loader. This is an experimental project; see compatibility below.
+A movement-monitoring mod for hosts and guests on Windows Among Us, with installation and build instructions for Steam, Epic Games, and Microsoft Store. Requires a compatible BepInEx IL2CPP loader. This is an experimental project; see compatibility below.
 
-Installation: [Steam (Windows)](#steam-installation-windows) | [Microsoft Store / Xbox (Windows)](#microsoft-store-installation-windows)
+Installation: [Steam (Windows)](#steam-installation-windows) | [Epic Games (Windows)](#epic-games-installation-windows) | [Microsoft Store / Xbox (Windows)](#microsoft-store-installation-windows)
 
 ## What it does
 
@@ -27,6 +27,7 @@ The mod ZIP includes both plugin DLLs, instructions, and the license; install Be
 | --- | --- |
 | Microsoft Store | Compiled against the local x64 game's assemblies with BepInEx **6.0.0-be.791**; loader startup verified. In-game detection and overlay verification remain pending. |
 | Steam | Dedicated target compiled against `AmongUs.GameLibs.Steam` **2026.9.29**, using generated Steam interop references. Windows x64 runtime testing remains pending. |
+| Epic Games | Experimental compatibility package using the same shared Windows API build and Steam **2026.9.29** references. Compilation against Epic-specific assemblies and Epic runtime testing are unverified. |
 
 The original `AmongUsAntiCheatMod-v0.2.0.zip` was built against Microsoft Store assemblies. Use `AmongUsAntiCheatMod-v0.2.0-Steam.zip` for Steam **2026.9.29**; it is a separate compilation of the same detection and overlay code against Steam references. Release files are prepared locally and must be attached to GitHub Releases before players can download them there. Neither compilation establishes in-game detection accuracy.
 
@@ -42,10 +43,19 @@ C:\Program Files (x86)\Steam\steamapps\common\Among Us
 
 Your Steam library may be on another drive. Keep Steam open and launch the game through Steam after installing the loader and mod. These instructions target native Windows; Linux/Steam Deck/Proton are unverified.
 
-1. Install the Windows **BepInEx 6 Unity IL2CPP** loader matching your game executable's architecture. See [loader setup](#install-bepinex-il2cpp-both-editions) below for download links and the first launch.
+1. Install the Windows **BepInEx 6 Unity IL2CPP** loader matching your game executable's architecture. See [loader setup](#install-bepinex-il2cpp-all-editions) below for download links and the first launch.
 2. Download `AmongUsAntiCheatMod-v0.2.0-Steam.zip` from Releases when available. It targets Steam game version **2026.9.29** on Windows x64. If the asset has not been uploaded, [build it from the pinned Steam references](#build-a-steam-release-zip). Other game versions require a matching build.
-3. Extract the mod ZIP into this Steam game folder. Check that **both** DLLs are in `BepInEx/plugins/AntiCheat/` as shown in [Install the mod](#install-the-mod-both-editions).
+3. Extract the mod ZIP into this Steam game folder. Check that **both** DLLs are in `BepInEx/plugins/AntiCheat/` as shown in [Install the mod](#install-the-mod-all-editions).
 4. Launch through Steam and join a private lobby. Check for the **Anti Cheat** panel and `Anti Cheat loaded` in the BepInEx log. Steam runtime verification is still pending.
+
+### Epic Games installation (Windows)
+
+The Epic Games ZIP is an **experimental compatibility candidate** for Windows game version **2026.9.29**. It uses Steam reference assemblies for the game APIs accessed by the mod; Epic-specific assembly compatibility has not been established. It is not an Epic-tested release.
+
+1. Close Among Us. In Epic Games Launcher, open **Library**, click the **three dots** beside Among Us, choose **Manage**, and click the folder icon beside **Installation**. This follows [Epic's instructions for finding an installed game's folder](https://www.epicgames.com/help/c-32735058/c-36403860/a20183292). Use the folder containing `Among Us.exe`; an example is `C:\Program Files\Epic Games\AmongUs`, but your path may differ.
+2. Install **BepInEx 6 Unity IL2CPP** matching the installed game executable's architecture: `win-x64` for 64-bit or `win-x86` for 32-bit. Follow the shared loader setup below. Launch once through Epic, wait for the main menu, then close the game and check that `BepInEx/interop/Assembly-CSharp.dll` exists.
+3. Download `AmongUsAntiCheatMod-v0.2.0-EpicGames.zip` from [Releases](https://github.com/muhie-1/AmongUsAntiCheatMod/releases) when the asset is uploaded. Extract it into the game folder, merging the included `BepInEx` directory. Both DLLs belong in `BepInEx/plugins/AntiCheat/`.
+4. Launch through Epic and test in a private lobby with automatic kicking off. Look for the panel and `Anti Cheat loaded` in the log. If the log reports missing game types/methods or patching errors, close the game and remove the mod, then [build against your Epic installation's own assemblies](#build-an-epic-games-release-zip).
 
 ### Microsoft Store installation (Windows)
 
@@ -57,13 +67,13 @@ C:\XboxGames\Among Us\Content
 
 Your installation path may differ. If the installation cannot be modified through supported app options, stop here; do not change WindowsApps ownership or permissions.
 
-1. Follow [loader setup](#install-bepinex-il2cpp-both-editions) using the Microsoft Store x64 package described below.
-2. Download the Microsoft Store mod ZIP from Releases and follow [Install the mod](#install-the-mod-both-editions).
+1. Follow [loader setup](#install-bepinex-il2cpp-all-editions) using the Microsoft Store x64 package described below.
+2. Download the Microsoft Store mod ZIP from Releases and follow [Install the mod](#install-the-mod-all-editions).
 3. Launch normally through Xbox / Microsoft Store and check the installation in a private lobby.
 
-### Install BepInEx IL2CPP (both editions)
+### Install BepInEx IL2CPP (all editions)
 
-If a compatible BepInEx 6 Unity IL2CPP loader already works in this installation, skip to [Install the mod](#install-the-mod-both-editions).
+If a compatible BepInEx 6 Unity IL2CPP loader already works in this installation, skip to [Install the mod](#install-the-mod-all-editions).
 
 1. Open the [official BepInEx builds page](https://builds.bepinex.dev/projects/bepinex_be).
 2. For the Microsoft Store **x64** setup used by this project, locate build **#791** and download `BepInEx-Unity.IL2CPP-win-x64-6.0.0-be.791+b782da4.zip`. The architecture must match the game executable; a 32-bit game needs the `win-x86` IL2CPP loader instead. BepInEx 5 and Unity Mono packages do not provide this mod's required loader.
@@ -80,9 +90,9 @@ See the [official BepInEx IL2CPP installation guide](https://docs.bepinex.dev/ma
 
 For the **Steam 2026.9.29** target, use the Windows **x64 Unity IL2CPP** loader (build #791 is the loader used for this project's local Microsoft Store setup). Older Steam builds may have a different architecture and are not covered by this release. Do not infer the game's architecture from `Program Files (x86)` in the installation path. Follow the [BepInEx architecture check](https://docs.bepinex.dev/master/articles/user_guide/troubleshooting.html#windows-check-the-bitness-of-the-game) if unsure. The generated log also reports `Process bitness`. The Steam target compiles, but its loader/game combination still needs runtime validation.
 
-### Install the mod (both editions)
+### Install the mod (all editions)
 
-1. On this repository's [Releases page](https://github.com/muhie-1/AmongUsAntiCheatMod/releases), expand **Assets** and choose a mod ZIP built for your edition. `AmongUsAntiCheatMod-v0.2.0.zip` is the original Microsoft Store build; a `-Steam.zip` asset should be built against Steam assemblies. If no Steam asset is available, use the Steam build steps below. The automatic **Source code** downloads are for developers and do not contain the compiled mod.
+1. On this repository's [Releases page](https://github.com/muhie-1/AmongUsAntiCheatMod/releases), expand **Assets** and choose your edition's mod ZIP. `AmongUsAntiCheatMod-v0.2.0.zip` is the original Microsoft Store build; `-Steam.zip` uses Steam references; `-EpicGames.zip` is the experimental compatibility package described above. If an asset is not available, use the build steps below. The automatic **Source code** downloads are for developers and do not contain the compiled mod.
 2. With the game closed, extract the mod ZIP into the folder containing `Among Us.exe`. Merge the included `BepInEx` folder with the existing one.
 3. Check that both DLLs are in this exact layout:
 
@@ -168,9 +178,27 @@ To build a Microsoft Store package with the same script:
 .\scripts\Build-Release.ps1 -Store MicrosoftStore -GameDir "C:\XboxGames\Among Us\Content"
 ```
 
-### Publishing builds for both editions
+### Build an Epic Games release ZIP
 
-Attach the generated `-Steam.zip` and `-MicrosoftStore.zip` assets to a GitHub prerelease. Keep `dist/` out of Git. Include the game version, reference source, BepInEx version, and verification status for each asset in the release notes. The Steam package target currently uses BepInEx **6.0.0-be.735** and Il2CppInterop **1.4.6-ci.426** as compile-time references to match the Cecil-based MSBuild generator; these dependencies are not bundled. Runtime compatibility with the selected loader must still be checked. Do not rename a Microsoft Store build to imply it was built or tested on Steam.
+To package the shared Windows API build as an explicitly unverified Epic compatibility download:
+
+```powershell
+.\scripts\Build-Release.ps1 -Store EpicGames
+```
+
+This creates `dist/EpicGames/AmongUsAntiCheatMod-v0.2.0-EpicGames.zip`. It uses the existing Steam package target and includes the reference source and Epic verification limits in `INSTALL.txt`. No Epic-specific package or local Epic installation was available here. This command does not turn Steam references into Epic references.
+
+For a build compiled against Epic's actual generated assemblies, install the matching BepInEx loader in the Epic game folder, launch once, close the game, and run:
+
+```powershell
+.\scripts\Build-Release.ps1 -Store EpicGames -GameDir "C:\Program Files\Epic Games\AmongUs"
+```
+
+Use the actual path from Epic's **Manage / Installation** folder button. Passing `GameDir` selects the local-assembly target and replaces the Epic ZIP with that build. Alternatively, copy `config/Game.EpicGames.props.example` to the repository root as `Game.props`, edit the path, and build `src/AntiCheat.Plugin/AntiCheat.Plugin.csproj` manually. If scripts are disabled, use the process-only `RemoteSigned` command shown in the Steam section, replacing `-Store Steam` with `-Store EpicGames`.
+
+### Publishing builds for all editions
+
+Attach the generated `-Steam.zip`, `-EpicGames.zip`, and `-MicrosoftStore.zip` assets to a GitHub prerelease. Keep `dist/` out of Git. Include the game version, reference source, BepInEx version, and verification status for each asset in the release notes. The Steam package target (also used for the default Epic compatibility download) currently uses BepInEx **6.0.0-be.735** and Il2CppInterop **1.4.6-ci.426** as compile-time references to match the Cecil-based MSBuild generator; these dependencies are not bundled. Runtime compatibility with the selected loader must still be checked. Do not describe a shared-reference compatibility package as compiled or tested against Epic's own assemblies.
 
 For each edition, verify plugin loading, the panel in a lobby, guest and host monitoring in a private match, meetings, role abilities, and map movement transitions. Keep automatic kicking off. The current tests verify the detection engine, not Steam runtime integration.
 
