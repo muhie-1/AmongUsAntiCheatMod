@@ -62,3 +62,7 @@ dotnet run --project tests/AntiCheat.Checks/AntiCheat.Checks.csproj -c Release
 This dependency-free check executable covers normal movement, sustained excessive movement, grace periods, transition exemptions, delayed samples, invalid coordinates, and state reset. It does not require Among Us.
 
 The integration follows the BepInEx IL2CPP `BasePlugin` and Harmony pattern used by [Reactor](https://github.com/NuclearPowered/Reactor/blob/master/Reactor/ReactorPlugin.cs). Reactor itself is not a dependency.
+
+## License
+
+This project's source code is licensed under the [MIT License](LICENSE). Among Us and third-party dependencies remain covered by their respective licenses.
