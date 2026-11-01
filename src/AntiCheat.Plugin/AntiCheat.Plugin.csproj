@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="../../Game.props" Condition="Exists('../../Game.props')" />
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <AssemblyName>AmongUs.AntiCheat</AssemblyName>
+    <EnableDefaultItems>true</EnableDefaultItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../AntiCheat.Core/AntiCheat.Core.csproj" />
+    <Reference Include="$(GameDir)/BepInEx/core/*.dll" Exclude="$(GameDir)/BepInEx/core/dobby.dll" Private="false" />
+    <Reference Include="$(GameDir)/BepInEx/interop/*.dll" Private="false" />
+  </ItemGroup>
+  <Target Name="CheckGame" BeforeTargets="ResolveReferences">
+    <Error Condition="'$(GameDir)' == ''" Text="GameDir is not configured. Copy Game.props.example to Game.props in the repository root and set GameDir to the folder containing Among Us.exe." />
+    <Error Condition="'$(GameDir)' != '' and !Exists('$(GameDir)/Among Us.exe')" Text="Among Us.exe was not found in '$(GameDir)'. Set GameDir in Game.props to the game's executable folder." />
+    <Error Condition="Exists('$(GameDir)/Among Us.exe') and !Exists('$(GameDir)/BepInEx/core/BepInEx.Unity.IL2CPP.dll')" Text="Among Us was found at '$(GameDir)', but BepInEx IL2CPP is missing. Install a compatible BepInEx 6 Unity IL2CPP loader for your game version and architecture. See README.md." />
+    <Error Condition="Exists('$(GameDir)/BepInEx/core/BepInEx.Unity.IL2CPP.dll') and !Exists('$(GameDir)/BepInEx/interop/Assembly-CSharp.dll')" Text="BepInEx was found, but generated game assemblies are missing. Launch Among Us once with BepInEx, close it, and check BepInEx/LogOutput.log if BepInEx/interop/Assembly-CSharp.dll is still absent." />
+  </Target>
+</Project>

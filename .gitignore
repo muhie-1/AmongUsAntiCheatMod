@@ -1,0 +1,6 @@
+**/bin/
+**/obj/
+Game.props
+*.user
+dist/
+.vscode/
