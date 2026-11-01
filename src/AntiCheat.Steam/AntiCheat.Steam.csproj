@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <AssemblyName>AmongUs.AntiCheat</AssemblyName>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <RestoreConfigFile>$(MSBuildThisFileDirectory)../../config/NuGet.Steam.Config</RestoreConfigFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../AntiCheat.Plugin/Plugin.cs" Link="Plugin.cs" />
+    <ProjectReference Include="../AntiCheat.Core/AntiCheat.Core.csproj" />
+    <PackageReference Include="AmongUs.GameLibs.Steam" Version="2026.9.29" PrivateAssets="all" />
+    <!-- Match the Cecil-based interop generator used by this MSBuild integration.
+         These are compile-time references; the release does not bundle a loader. -->
+    <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.735" PrivateAssets="all" ExcludeAssets="runtime;native" />
+    <PackageReference Include="Il2CppInterop.Generator" Version="1.4.6-ci.426" PrivateAssets="all" ExcludeAssets="runtime" />
+    <PackageReference Include="Il2CppInterop.Runtime" Version="1.4.6-ci.426" PrivateAssets="all" ExcludeAssets="runtime;native" />
+    <PackageReference Include="Il2CppInterop.HarmonySupport" Version="1.4.6-ci.426" PrivateAssets="all" ExcludeAssets="runtime;native" />
+    <PackageReference Include="BepInEx.IL2CPP.MSBuild" Version="2.1.0-rc.1" PrivateAssets="all" ExcludeAssets="runtime" />
+  </ItemGroup>
+</Project>

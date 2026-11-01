@@ -1,6 +1,8 @@
 # Among Us Anti Cheat
 
-A movement-monitoring mod for hosts and guests on Windows Among Us, including the Microsoft Store edition when a compatible BepInEx IL2CPP loader is available. This is an initial source implementation, not a game-version-verified release.
+A movement-monitoring mod for hosts and guests on Windows Among Us, with installation and build instructions for Steam and Microsoft Store. Requires a compatible BepInEx IL2CPP loader. This is an experimental project; see compatibility below.
+
+Installation: [Steam (Windows)](#steam-installation-windows) | [Microsoft Store / Xbox (Windows)](#microsoft-store-installation-windows)
 
 ## What it does
 
@@ -19,11 +21,35 @@ This is a movement heuristic. It does not prevent all cheats, validate kill/task
 
 Use the downloadable mod ZIP from [Releases](https://github.com/muhie-1/AmongUsAntiCheatMod/releases). You do not need Git, Visual Studio, the .NET SDKs, or `Game.props` to install the compiled release.
 
-The current prerelease was compiled against the Microsoft Store Windows x64 installation with BepInEx **6.0.0-be.791**. Loader startup and compilation were verified locally; in-game detection and the overlay still need verification. Other game versions and storefronts are unverified. The mod ZIP includes both plugin DLLs, instructions, and the license; install BepInEx separately.
+The mod ZIP includes both plugin DLLs, instructions, and the license; install BepInEx separately. The plugin targets AnyCPU; the loader's architecture must match the game executable.
 
-### 1. Find your game folder
+| Windows edition | Build and verification status |
+| --- | --- |
+| Microsoft Store | Compiled against the local x64 game's assemblies with BepInEx **6.0.0-be.791**; loader startup verified. In-game detection and overlay verification remain pending. |
+| Steam | Dedicated target compiled against `AmongUs.GameLibs.Steam` **2026.9.29**, using generated Steam interop references. Windows x64 runtime testing remains pending. |
 
-Close Among Us. In the Xbox app, use the game's **Manage / Files / Browse** option if available. Open the folder containing `Among Us.exe`, for example:
+The original `AmongUsAntiCheatMod-v0.2.0.zip` was built against Microsoft Store assemblies. Use `AmongUsAntiCheatMod-v0.2.0-Steam.zip` for Steam **2026.9.29**; it is a separate compilation of the same detection and overlay code against Steam references. Release files are prepared locally and must be attached to GitHub Releases before players can download them there. Neither compilation establishes in-game detection accuracy.
+
+### Steam installation (Windows)
+
+Close Among Us before installing.
+
+In Steam, open **Library**, right-click **Among Us**, and choose **Manage → Browse local files** (or **Properties → Installed Files → Browse**). A common path is:
+
+```text
+C:\Program Files (x86)\Steam\steamapps\common\Among Us
+```
+
+Your Steam library may be on another drive. Keep Steam open and launch the game through Steam after installing the loader and mod. These instructions target native Windows; Linux/Steam Deck/Proton are unverified.
+
+1. Install the Windows **BepInEx 6 Unity IL2CPP** loader matching your game executable's architecture. See [loader setup](#install-bepinex-il2cpp-both-editions) below for download links and the first launch.
+2. Download `AmongUsAntiCheatMod-v0.2.0-Steam.zip` from Releases when available. It targets Steam game version **2026.9.29** on Windows x64. If the asset has not been uploaded, [build it from the pinned Steam references](#build-a-steam-release-zip). Other game versions require a matching build.
+3. Extract the mod ZIP into this Steam game folder. Check that **both** DLLs are in `BepInEx/plugins/AntiCheat/` as shown in [Install the mod](#install-the-mod-both-editions).
+4. Launch through Steam and join a private lobby. Check for the **Anti Cheat** panel and `Anti Cheat loaded` in the BepInEx log. Steam runtime verification is still pending.
+
+### Microsoft Store installation (Windows)
+
+In the Xbox app, use the game's **Manage / Files / Browse** option if available. An example path is:
 
 ```text
 C:\XboxGames\Among Us\Content
@@ -31,9 +57,13 @@ C:\XboxGames\Among Us\Content
 
 Your installation path may differ. If the installation cannot be modified through supported app options, stop here; do not change WindowsApps ownership or permissions.
 
-### 2. Install BepInEx IL2CPP
+1. Follow [loader setup](#install-bepinex-il2cpp-both-editions) using the Microsoft Store x64 package described below.
+2. Download the Microsoft Store mod ZIP from Releases and follow [Install the mod](#install-the-mod-both-editions).
+3. Launch normally through Xbox / Microsoft Store and check the installation in a private lobby.
 
-If a compatible BepInEx 6 Unity IL2CPP loader already works in this installation, skip to step 3.
+### Install BepInEx IL2CPP (both editions)
+
+If a compatible BepInEx 6 Unity IL2CPP loader already works in this installation, skip to [Install the mod](#install-the-mod-both-editions).
 
 1. Open the [official BepInEx builds page](https://builds.bepinex.dev/projects/bepinex_be).
 2. For the Microsoft Store **x64** setup used by this project, locate build **#791** and download `BepInEx-Unity.IL2CPP-win-x64-6.0.0-be.791+b782da4.zip`. The architecture must match the game executable; a 32-bit game needs the `win-x86` IL2CPP loader instead. BepInEx 5 and Unity Mono packages do not provide this mod's required loader.
@@ -48,9 +78,11 @@ If a compatible BepInEx 6 Unity IL2CPP loader already works in this installation
 
 See the [official BepInEx IL2CPP installation guide](https://docs.bepinex.dev/master/articles/user_guide/installation/unity_il2cpp.html) for loader setup details.
 
-### 3. Install the mod
+For the **Steam 2026.9.29** target, use the Windows **x64 Unity IL2CPP** loader (build #791 is the loader used for this project's local Microsoft Store setup). Older Steam builds may have a different architecture and are not covered by this release. Do not infer the game's architecture from `Program Files (x86)` in the installation path. Follow the [BepInEx architecture check](https://docs.bepinex.dev/master/articles/user_guide/troubleshooting.html#windows-check-the-bitness-of-the-game) if unsure. The generated log also reports `Process bitness`. The Steam target compiles, but its loader/game combination still needs runtime validation.
 
-1. On this repository's [Releases page](https://github.com/muhie-1/AmongUsAntiCheatMod/releases), expand **Assets** and download `AmongUsAntiCheatMod-v0.2.0.zip`. The automatic **Source code** downloads are for developers and do not contain the compiled mod.
+### Install the mod (both editions)
+
+1. On this repository's [Releases page](https://github.com/muhie-1/AmongUsAntiCheatMod/releases), expand **Assets** and choose a mod ZIP built for your edition. `AmongUsAntiCheatMod-v0.2.0.zip` is the original Microsoft Store build; a `-Steam.zip` asset should be built against Steam assemblies. If no Steam asset is available, use the Steam build steps below. The automatic **Source code** downloads are for developers and do not contain the compiled mod.
 2. With the game closed, extract the mod ZIP into the folder containing `Among Us.exe`. Merge the included `BepInEx` folder with the existing one.
 3. Check that both DLLs are in this exact layout:
 
@@ -63,7 +95,7 @@ See the [official BepInEx IL2CPP installation guide](https://docs.bepinex.dev/ma
          AntiCheat.Core.dll
    ```
 
-### 4. Check the installation
+### Check the installation
 
 Launch the game and join or host a private lobby. Look for the **Anti Cheat** panel near the top-left. In the waiting lobby it should say **Waiting for match to start**; movement checks begin during the match. Guest mode shows local warnings only. Automatic kicking is off by default.
 
@@ -97,6 +129,50 @@ Complete the BepInEx setup above first so the generated game assemblies exist.
 4. Start the game and join or host a private lobby. Confirm `Anti Cheat loaded` in `BepInEx/LogOutput.log`.
 
 Game API changes may require adjusting `Plugin.cs`; a successful core check does not establish game compatibility. No game assemblies are bundled. The plugin has been compiled against the local Microsoft Store game's generated assemblies with BepInEx 6.0.0-be.791. In-game detection and enforcement have not yet been verified.
+
+### Build a Steam release ZIP
+
+The dedicated `src/AntiCheat.Steam/AntiCheat.Steam.csproj` target shares `Plugin.cs` and the detection engine with the Microsoft Store build. It restores the pinned `AmongUs.GameLibs.Steam` **2026.9.29** package and generates interop references using `BepInEx.IL2CPP.MSBuild`. It does not use `Game.props` or Microsoft Store assemblies and does not require a local Steam installation to compile.
+
+Install the .NET 6 and .NET 8 SDKs. From this repository's PowerShell terminal, run:
+
+```powershell
+.\scripts\Build-Release.ps1 -Store Steam
+```
+
+The script creates `dist/Steam/AmongUsAntiCheatMod-v0.2.0-Steam.zip` with both DLLs, the license, and installation instructions. Package restore uses the BepInEx and NuGet.org feeds in `config/NuGet.Steam.Config`; the first build requires internet access and can take longer to generate references. The script writes the release into this repository's ignored `dist/` folder, and the build tools use normal .NET/NuGet caches. It does not modify a game installation or upload anything. Compilation failure stops packaging.
+
+If PowerShell reports that scripts are disabled, this command allows local scripts for this process only, without changing your saved execution policy:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy RemoteSigned -File .\scripts\Build-Release.ps1 -Store Steam
+```
+
+To compile the Steam DLLs without packaging, run:
+
+```powershell
+dotnet build src/AntiCheat.Steam/AntiCheat.Steam.csproj -c Release
+```
+
+For a different game version, or to use the exact references generated by your own Steam loader, install and launch the game with BepInEx first, then provide its path:
+
+```powershell
+.\scripts\Build-Release.ps1 -Store Steam -GameDir "C:\Program Files (x86)\Steam\steamapps\common\Among Us"
+```
+
+Passing `GameDir` selects the local-assembly build instead of the pinned reference-package build. For manual local builds, copy `config/Game.Steam.props.example` to the repository root as `Game.props`, edit the path, and run `dotnet build src/AntiCheat.Plugin/AntiCheat.Plugin.csproj -c Release`. `config/Game.MicrosoftStore.props.example` provides the equivalent Xbox path. The release script passes `GameDir` explicitly, so your existing `Game.props` does not need to change.
+
+To build a Microsoft Store package with the same script:
+
+```powershell
+.\scripts\Build-Release.ps1 -Store MicrosoftStore -GameDir "C:\XboxGames\Among Us\Content"
+```
+
+### Publishing builds for both editions
+
+Attach the generated `-Steam.zip` and `-MicrosoftStore.zip` assets to a GitHub prerelease. Keep `dist/` out of Git. Include the game version, reference source, BepInEx version, and verification status for each asset in the release notes. The Steam package target currently uses BepInEx **6.0.0-be.735** and Il2CppInterop **1.4.6-ci.426** as compile-time references to match the Cecil-based MSBuild generator; these dependencies are not bundled. Runtime compatibility with the selected loader must still be checked. Do not rename a Microsoft Store build to imply it was built or tested on Steam.
+
+For each edition, verify plugin loading, the panel in a lobby, guest and host monitoring in a private match, meetings, role abilities, and map movement transitions. Keep automatic kicking off. The current tests verify the detection engine, not Steam runtime integration.
 
 ## Configuration
 

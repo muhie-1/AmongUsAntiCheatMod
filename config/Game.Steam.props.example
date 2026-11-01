@@ -1,0 +1,6 @@
+<Project>
+  <PropertyGroup>
+    <!-- Copy to Game.props in the repository root and adjust for your Steam library. -->
+    <GameDir>C:/Program Files (x86)/Steam/steamapps/common/Among Us</GameDir>
+  </PropertyGroup>
+</Project>
