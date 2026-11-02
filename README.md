@@ -90,7 +90,7 @@ Your installation path may differ. If the installation cannot be modified throug
 If a compatible BepInEx 6 Unity IL2CPP loader already works in this installation, skip to [Install the mod](#install-the-mod-all-editions).
 
 1. Open the [official BepInEx builds page](https://builds.bepinex.dev/projects/bepinex_be).
-2. For the Microsoft Store **x64** setup used by this project, locate build **#791** and download `BepInEx-Unity.IL2CPP-win-x64-6.0.0-be.791+b782da4.zip`. The architecture must match the game executable; a 32-bit game needs the `win-x86` IL2CPP loader instead. BepInEx 5 and Unity Mono packages do not provide this mod's required loader.
+2. For the Microsoft Store **x64** setup used by this project, scroll down and locate build **#791** and download `BepInEx-Unity.IL2CPP-win-x64-6.0.0-be.791+b782da4.zip`. The architecture must match the game executable; a 32-bit game needs the `win-x86` IL2CPP loader instead. BepInEx 5 and Unity Mono packages do not provide this mod's required loader.
 3. Extract the entire loader ZIP into the folder containing `Among Us.exe`. The loader's `BepInEx` folder should be beside the executable, rather than inside an extra ZIP-named folder. If replacing a different loader, back it up outside the game folder first and avoid mixing its files with the new loader.
 4. Launch Among Us normally. The first launch may take longer while BepInEx generates assemblies. Wait for the main menu, then close the game.
 5. Confirm these files exist:
