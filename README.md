@@ -2,7 +2,7 @@
 
 A Windows Among Us mod with movement monitoring and meeting sabotage protection. Includes installation and build instructions for Steam, Epic Games, and Microsoft Store. Requires a compatible BepInEx IL2CPP loader. This is an experimental project; see compatibility below.
 
-Installation: [Steam (Windows)](#steam-installation-windows) | [Epic Games (Windows)](#epic-games-installation-windows) | [Microsoft Store / Xbox (Windows)](#microsoft-store-installation-windows)
+Installation: [Steam (Windows)](#steam-installation-windows) | [Epic Games (Windows)](#epic-games-installation-windows) | [Microsoft Store / Xbox (Windows)](#microsoft-store-installation-windows) | [Update notifications](#optional-windows-update-notifier)
 
 ## Downloads
 
@@ -17,6 +17,22 @@ All three downloads are assets of the [v0.3.0 experimental prerelease](https://g
 Each ZIP includes both mod DLLs, installation instructions, the README, and license. Install a compatible **BepInEx 6 Unity IL2CPP** loader separately. The automatic **Source code** archives are for developers and do not contain the compiled mod.
 
 Steam targets game version **2026.9.29**. The Epic download uses Steam API references and has not been verified against Epic's assemblies or in-game. Check the compatibility table below before installing; keep automatic kicking off during testing.
+
+### Optional Windows update notifier
+
+For update notifications when you start your computer and sign in, look for **`AmongUsAntiCheatMod-UpdateNotifier-win-x64.zip`** under **Assets** on the [v0.3.0 release page](https://github.com/muhie-1/AmongUsAntiCheatMod/releases/tag/v0.3.0). This separate Windows x64 tool works with Microsoft Store, Steam, and Epic Games installations. Installing a game-mod ZIP alone does not enable notifications.
+
+1. Extract the notifier ZIP and run **`AmongUs.AntiCheat.UpdateNotifier.exe`**.
+2. Click **Browse** and select your installed `BepInEx/plugins/AntiCheat/AmongUs.AntiCheat.dll`.
+3. Select your edition: **MicrosoftStore**, **Steam**, or **EpicGames**.
+4. Keep **Include experimental prereleases** checked to receive this project's prerelease updates, or uncheck it for stable releases only.
+5. Click **Enable at Windows sign-in**. This enables checks for your Windows account; administrator rights and the .NET SDK are not required.
+
+At each sign-in, the notifier waits 30 seconds, checks GitHub once, and exits. If a newer version has a ZIP for your edition, it asks whether to open the release's download page. Choose **Yes** to open GitHub, then download and install your edition's mod ZIP with Among Us closed. Downloads and installation stay manual. It stays silent when you are up to date or the network check fails.
+
+To stop notifications, run the notifier again and click **Disable startup checks**, or disable **AmongUsAntiCheatUpdateNotifier** in Windows Startup apps. Moving the game or switching editions requires selecting the new installed DLL in setup.
+
+See [Windows update notifications](docs/UPDATE-NOTIFICATIONS.md) for details, building the notifier, and troubleshooting. Simply attaching the ZIP to a release does not enable it on anybody's computer; each user must enable it once.
 
 ## What it does
 
@@ -235,7 +251,7 @@ For each edition, verify plugin loading, the panel in a lobby, guest and host mo
 
 ### Optional update notifications at Windows sign-in
 
-An optional companion can notify you of a newer release when you start your computer and sign in. It opens the GitHub download page only if you choose **Yes**; updates are installed manually. Setup and disable instructions are in [Windows update notifications](docs/UPDATE-NOTIFICATIONS.md). The notifier is a separate download prepared locally; the existing game-mod ZIPs do not register startup checks.
+Follow [Optional Windows update notifier](#optional-windows-update-notifier) above to enable or disable sign-in notifications. The tool is downloaded separately and opens the GitHub release page only after you choose **Yes**; updates are installed manually.
 
 ### Mod settings
 
