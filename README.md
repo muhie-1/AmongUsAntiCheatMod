@@ -20,7 +20,7 @@ Steam targets game version **2026.9.29**. The Epic download uses Steam API refer
 
 ## What it does
 
-The new meeting sabotage protection requires **v0.3.0**, currently prepared locally. See the [v0.3.0 release notes](releases/v0.3.0.md). The published **v0.2.0** assets linked above contain movement monitoring only.
+The new meeting sabotage protection requires **v0.3.0**. Release notes and downloads belong on the [GitHub Releases page](https://github.com/muhie-1/AmongUsAntiCheatMod/releases). The **v0.2.0** assets linked above contain movement monitoring only.
 
 - Samples locally observed player positions and flags repeated movement above a configurable speed budget.
 - Shows a local status panel in the lobby and match, with recent suspicious-movement warnings for 12 seconds. Checks begin when the match starts.

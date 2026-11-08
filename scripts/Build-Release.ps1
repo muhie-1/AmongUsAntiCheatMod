@@ -69,11 +69,9 @@ foreach ($dll in @('AmongUs.AntiCheat.dll', 'AntiCheat.Core.dll')) {
 foreach ($document in @('README.md', 'LICENSE')) {
     Copy-Item -LiteralPath (Join-Path $repoRoot $document) -Destination $stageRoot
 }
-$releaseNotes = Join-Path $repoRoot "releases/v$version.md"
+$releaseNotes = Join-Path $repoRoot "dist/release-notes-v$version.md"
 if (Test-Path -LiteralPath $releaseNotes) {
-    $notesDestination = Join-Path $stageRoot 'releases'
-    New-Item -ItemType Directory -Path $notesDestination -Force | Out-Null
-    Copy-Item -LiteralPath $releaseNotes -Destination $notesDestination
+    Copy-Item -LiteralPath $releaseNotes -Destination (Join-Path $stageRoot 'RELEASE-NOTES.md')
 }
 $installText = @"
 Among Us Anti Cheat v$version - $Store - Experimental prerelease
