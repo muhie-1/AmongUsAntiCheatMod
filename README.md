@@ -16,6 +16,8 @@ All three downloads are assets of the [v0.3.0 experimental prerelease](https://g
 
 Each ZIP includes both mod DLLs, installation instructions, the README, and license. Install a compatible **BepInEx 6 Unity IL2CPP** loader separately. The automatic **Source code** archives are for developers and do not contain the compiled mod.
 
+**Smart App Control:** current builds are unsigned. Windows has blocked the mod on the Microsoft Store test installation, so the current release cannot provide protection there while the block remains. A trusted signed release and verification of the loader's dependencies are still pending. See [Smart App Control compatibility](docs/SMART-APP-CONTROL.md) to keep it enabled and collect diagnostics.
+
 Steam targets game version **2026.9.29**. The Epic download uses Steam API references and has not been verified against Epic's assemblies or in-game. Check the compatibility table below before installing; keep automatic kicking off during testing.
 
 ### Optional Windows update notifier
@@ -70,7 +72,7 @@ The mod ZIP includes both plugin DLLs, instructions, and the license; install Be
 
 | Windows edition | Build and verification status |
 | --- | --- |
-| Microsoft Store | Compiled against the local x64 game's assemblies with BepInEx **6.0.0-be.791**; loader startup verified. In-game detection and overlay verification remain pending. |
+| Microsoft Store | Compiled against the local x64 game's assemblies with BepInEx **6.0.0-be.791**; loader startup verified, but Smart App Control currently blocks the unsigned plugin on the test installation. In-game detection and overlay verification remain pending. |
 | Steam | Dedicated target compiled against `AmongUs.GameLibs.Steam` **2026.9.29**, using generated Steam interop references. Windows x64 runtime testing remains pending. |
 | Epic Games | Experimental compatibility package using the same shared Windows API build and Steam **2026.9.29** references. Compilation against Epic-specific assemblies and Epic runtime testing are unverified. |
 
@@ -160,6 +162,7 @@ After closing the game, check `BepInEx/LogOutput.log` for `Anti Cheat loaded`. L
 
 - **No BepInEx log or generated assemblies:** check that the entire Unity IL2CPP loader archive was extracted beside `Among Us.exe` and that its architecture matches the game. Check `BepInEx/LogOutput.log` (or `LogOutput.txt` on some builds) if present.
 - **BepInEx loads but no Anti Cheat panel:** check that both mod DLLs are in `BepInEx/plugins/AntiCheat/`, then search the log for `Anti Cheat` and errors. If a configuration file already exists, confirm `Enabled = true` and `ShowOverlay = true`, then restart the game.
+- **`An Application Control policy has blocked this file (0x800711C7)`:** Windows blocked the named file before it could load. Check Code Integrity events and follow [Smart App Control compatibility](docs/SMART-APP-CONTROL.md). The current unsigned build has no verified solution that keeps Smart App Control enabled; signing the mod alone may leave blocked loader dependencies unresolved.
 - **Warnings during legitimate movement:** leave `KickOnDetection = false`. Network delays and legitimate abilities can resemble cheating; see configuration below.
 - **Still stuck:** [open an issue](https://github.com/muhie-1/AmongUsAntiCheatMod/issues) with your game version, storefront, BepInEx version, and relevant error lines. Remove personal paths or other private information before sharing logs.
 
@@ -246,6 +249,8 @@ Use the actual path from Epic's **Manage / Installation** folder button. Passing
 Attach the generated `-Steam.zip`, `-EpicGames.zip`, and `-MicrosoftStore.zip` assets to a GitHub prerelease. Keep `dist/` out of Git. Include the game version, reference source, BepInEx version, and verification status for each asset in the release notes. The Steam package target (also used for the default Epic compatibility download) currently uses BepInEx **6.0.0-be.735** and Il2CppInterop **1.4.6-ci.426** as compile-time references to match the Cecil-based MSBuild generator; these dependencies are not bundled. Runtime compatibility with the selected loader must still be checked. Do not describe a shared-reference compatibility package as compiled or tested against Epic's own assemblies.
 
 For each edition, verify plugin loading, the panel in a lobby, guest and host monitoring in a private match, meetings, role abilities, and map movement transitions. Keep automatic kicking off. The current tests verify the detection engine, not Steam runtime integration.
+
+The release scripts produce unsigned files. Before publishing a signed release, follow the [signing and verification guidance](docs/SMART-APP-CONTROL.md#publisher-requirements). Signing and complete Smart App Control compatibility testing are separate from successful compilation.
 
 ## Configuration
 

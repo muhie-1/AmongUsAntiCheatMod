@@ -69,6 +69,9 @@ foreach ($dll in @('AmongUs.AntiCheat.dll', 'AntiCheat.Core.dll')) {
 foreach ($document in @('README.md', 'LICENSE')) {
     Copy-Item -LiteralPath (Join-Path $repoRoot $document) -Destination $stageRoot
 }
+$packageDocs = Join-Path $stageRoot 'docs'
+New-Item -ItemType Directory -Path $packageDocs -Force | Out-Null
+Copy-Item -LiteralPath (Join-Path $repoRoot 'docs/SMART-APP-CONTROL.md') -Destination $packageDocs
 $releaseNotes = Join-Path $repoRoot "dist/release-notes-v$version.md"
 if (Test-Path -LiteralPath $releaseNotes) {
     Copy-Item -LiteralPath $releaseNotes -Destination (Join-Path $stageRoot 'RELEASE-NOTES.md')
@@ -79,6 +82,8 @@ Among Us Anti Cheat v$version - $Store - Experimental prerelease
 $referenceInfo
 $targetInfo
 Compilation does not establish in-game compatibility or detection accuracy.
+This script produces unsigned DLLs. Smart App Control may block the plugin or
+loader dependencies. See docs/SMART-APP-CONTROL.md before installing on such a PC.
 
 1. Close Among Us.
 2. Install BepInEx 6 Unity IL2CPP matching your game version and architecture.
@@ -101,4 +106,5 @@ Set-Content -LiteralPath (Join-Path $stageRoot 'INSTALL.txt') -Value $installTex
 $zipPath = Join-Path $outputRoot "AmongUsAntiCheatMod-v$version-$Store.zip"
 Compress-Archive -Path (Join-Path $stageRoot '*') -DestinationPath $zipPath -Force
 Write-Output "Release ZIP: $zipPath"
+Write-Output 'Unsigned package: Smart App Control compatibility has not been established.'
 Write-Output 'Run a private-lobby smoke test before advertising this build as verified.'
