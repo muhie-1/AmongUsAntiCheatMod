@@ -9,8 +9,8 @@ using UnityEngine;
 
 namespace AntiCheat.Plugin;
 
-[BepInPlugin("local.amongus.anticheat", "Among Us Anti Cheat", "0.2.0")]
-public sealed class Plugin : BasePlugin
+[BepInPlugin("local.amongus.anticheat", "Among Us Anti Cheat", "0.3.0")]
+public sealed partial class Plugin : BasePlugin
 {
     internal static Plugin Instance = null!;
     private readonly Harmony harmony = new("local.amongus.anticheat");
@@ -35,9 +35,10 @@ public sealed class Plugin : BasePlugin
         kick = Config.Bind("General", "KickOnDetection", false, "Kick after repeated movement violations. Test in private lobbies first. Never bans.");
         speed = Config.Bind("Movement", "MaximumWorldUnitsPerSecond", 12f,
             new ConfigDescription("Allowed speed including all lobby/role speed modifiers. Raise for custom roles or fast lobbies.", new AcceptableValueRange<float>(1f, 100f)));
+        ConfigureProtection();
         harmony.PatchAll();
         overlay = AddComponent<AntiCheatOverlay>();
-        Log.LogInfo("Anti Cheat loaded. Host and guest movement monitoring; local overlay enabled by default.");
+        Log.LogInfo("Anti Cheat loaded. Movement monitoring and meeting sabotage protection enabled by default.");
     }
 
     internal void Observe(PlayerControl player)
@@ -46,10 +47,9 @@ public sealed class Plugin : BasePlugin
         try
         {
             var client = AmongUsClient.Instance;
-            if (client == null || (!client.AmHost && !monitorAsGuest.Value) || !client.IsGameStarted || MeetingHud.Instance != null || ExileController.Instance != null)
+            if (client == null || (!client.AmHost && !monitorAsGuest.Value) || !client.IsGameStarted || IsMeetingPhase)
             {
                 detector.Clear();
-                lastAlert = "";
                 return;
             }
             if (player.Data == null || player.Data.Disconnected || player.Data.IsDead)
@@ -90,11 +90,15 @@ public sealed class Plugin : BasePlugin
         else if (!enabled.Value) status = "Monitoring disabled";
         else if (!client.AmHost && !monitorAsGuest.Value) status = "Guest monitoring disabled";
         else if (!client.IsGameStarted) status = "Waiting for match to start";
-        else if (MeetingHud.Instance != null || ExileController.Instance != null) status = "Monitoring paused during meeting";
+        else if (IsMeetingPhase) status = "Meeting | movement paused | " +
+            (protectionFailed ? "sabotage checks stopped" : !monitorMeetingSabotage.Value ? "sabotage checks off" :
+            client.AmHost && blockMeetingSabotage.Value ? "sabotage guard active" : "watching sabotage");
         else status = client.AmHost ? "Monitoring | Host" : "Monitoring | Guest (local warnings only)";
         if (enabled.Value && !failed && clock.Elapsed.TotalSeconds < alertUntil && lastAlert.Length > 0)
             status += "\n" + lastAlert;
-        GUI.Box(new Rect(12, 12, Math.Min(460, Screen.width - 24), 78), "Anti Cheat\n" + status);
+        if (enabled.Value && clock.Elapsed.TotalSeconds < protectionNoticeUntil)
+            status += "\n" + protectionNotice;
+        GUI.Box(new Rect(12, 12, Math.Min(580, Screen.width - 24), 108), "Anti Cheat\n" + status);
     }
 
     public override bool Unload()
@@ -102,6 +106,7 @@ public sealed class Plugin : BasePlugin
         harmony.UnpatchSelf();
         if (overlay != null) UnityEngine.Object.Destroy(overlay);
         detector.Clear();
+        ResetProtection();
         return true;
     }
 }
@@ -109,6 +114,7 @@ public sealed class Plugin : BasePlugin
 public sealed class AntiCheatOverlay : MonoBehaviour
 {
     public AntiCheatOverlay(IntPtr pointer) : base(pointer) { }
+    public void Update() => Plugin.Instance.TickProtection();
     public void OnGUI() => Plugin.Instance.DrawOverlay();
 }
 

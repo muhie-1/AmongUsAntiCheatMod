@@ -69,6 +69,12 @@ foreach ($dll in @('AmongUs.AntiCheat.dll', 'AntiCheat.Core.dll')) {
 foreach ($document in @('README.md', 'LICENSE')) {
     Copy-Item -LiteralPath (Join-Path $repoRoot $document) -Destination $stageRoot
 }
+$releaseNotes = Join-Path $repoRoot "releases/v$version.md"
+if (Test-Path -LiteralPath $releaseNotes) {
+    $notesDestination = Join-Path $stageRoot 'releases'
+    New-Item -ItemType Directory -Path $notesDestination -Force | Out-Null
+    Copy-Item -LiteralPath $releaseNotes -Destination $notesDestination
+}
 $installText = @"
 Among Us Anti Cheat v$version - $Store - Experimental prerelease
 
@@ -83,6 +89,10 @@ Compilation does not establish in-game compatibility or detection accuracy.
    Both DLLs belong in BepInEx/plugins/AntiCheat/.
 5. Launch via your storefront and test in a private lobby.
    Look for the Anti Cheat panel. Movement checks start during the match.
+
+Meeting sabotage checks run during meetings/exile. Hosts can reject known
+sabotage-start requests; guests only observe warnings. Repairs pass.
+Secretly reading impostor roles cannot be reliably detected by this mod.
 
 Keep automatic kicking off during testing. Guest mode only shows local warnings.
 See README.md for Steam, Epic Games, and Microsoft Store setup and troubleshooting.

@@ -8,7 +8,7 @@
     <RestoreConfigFile>$(MSBuildThisFileDirectory)../../config/NuGet.Steam.Config</RestoreConfigFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="../AntiCheat.Plugin/Plugin.cs" Link="Plugin.cs" />
+    <Compile Include="../AntiCheat.Plugin/*.cs" Link="%(Filename)%(Extension)" />
     <ProjectReference Include="../AntiCheat.Core/AntiCheat.Core.csproj" />
     <PackageReference Include="AmongUs.GameLibs.Steam" Version="2026.9.29" PrivateAssets="all" />
     <!-- Match the Cecil-based interop generator used by this MSBuild integration.

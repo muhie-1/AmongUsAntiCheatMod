@@ -1,6 +1,6 @@
 # Among Us Anti Cheat
 
-A movement-monitoring mod for hosts and guests on Windows Among Us, with installation and build instructions for Steam, Epic Games, and Microsoft Store. Requires a compatible BepInEx IL2CPP loader. This is an experimental project; see compatibility below.
+A Windows Among Us mod with movement monitoring and meeting sabotage protection. Includes installation and build instructions for Steam, Epic Games, and Microsoft Store. Requires a compatible BepInEx IL2CPP loader. This is an experimental project; see compatibility below.
 
 Installation: [Steam (Windows)](#steam-installation-windows) | [Epic Games (Windows)](#epic-games-installation-windows) | [Microsoft Store / Xbox (Windows)](#microsoft-store-installation-windows)
 
@@ -20,6 +20,8 @@ Steam targets game version **2026.9.29**. The Epic download uses Steam API refer
 
 ## What it does
 
+The new meeting sabotage protection requires **v0.3.0**, currently prepared locally. See the [v0.3.0 release notes](releases/v0.3.0.md). The published **v0.2.0** assets linked above contain movement monitoring only.
+
 - Samples locally observed player positions and flags repeated movement above a configurable speed budget.
 - Shows a local status panel in the lobby and match, with recent suspicious-movement warnings for 12 seconds. Checks begin when the match starts.
 - Works when you join another host; guest mode only displays/logs warnings and cannot kick anyone.
@@ -28,8 +30,21 @@ Steam targets game version **2026.9.29**. The Epic download uses Steam API refer
 - Allows grace periods after spawning, vents, ladders, moving platforms, and movement-disabled transitions.
 - Logs evidence to the BepInEx log. Optional kicks are disabled by default; it never bans players.
 - Stops monitoring and logs an error if the game integration throws an exception.
+- In v0.3.0, checks known reactor, oxygen, lights, communications, seismic, helicopter, and mushroom mixup sabotage starts during meetings/exile. Hosts can reject these requests; guests can only observe warnings.
 
 This is a movement heuristic. It does not prevent all cheats, validate kill/task RPCs, detect installed cheat software, or protect a lobby hosted by somebody else. Network jitter and legitimate custom-role abilities can resemble cheating. Single teleports are deliberately not enough to trigger an alert. Keep automatic kicks off until private-lobby testing is complete.
+
+### Meeting sabotage protection (v0.3.0)
+
+When you host, the default guard rejects recognized sabotage initiation requests during the meeting/exile phase. It covers both system-update overloads, including direct damage operations, and leaves recognized repairs and console operations alone. Doors and unknown/custom operations are outside this rule. It does not automatically kick the player referenced in an update payload because that reference does not prove who sent it.
+
+As a guest, the mod cannot enforce the host's game state. It watches sabotage systems becoming active during meetings and shows a local warning with **source unknown**. Systems that were already active are not treated as new attacks. The observer records a baseline during a 1.5-second meeting grace period to reduce delayed-state false alarms; attacks in that window can be missed. Scripted/custom game modes and delayed packets may still create misleading warnings. Disable this guard for rules that intentionally allow meeting sabotage.
+
+Warnings stay on screen for 15 seconds and are logged locally. Repeated sabotage warnings are limited to one per five seconds; the host still rejects every recognized blocked request. In-game verification remains pending, and this does not cover every malicious RPC or state-synchronization path.
+
+### Role knowledge limitation
+
+This mod cannot determine whether another player secretly read impostor roles without sending observable cheating actions. Correct deductions, accusations, or leaving the game do not prove role hacking. It does not reveal hidden roles or label somebody a hacker based on a guess.
 
 ## Installation for players
 
@@ -164,7 +179,7 @@ Install the .NET 6 and .NET 8 SDKs. From this repository's PowerShell terminal, 
 .\scripts\Build-Release.ps1 -Store Steam
 ```
 
-The script creates `dist/Steam/AmongUsAntiCheatMod-v0.2.0-Steam.zip` with both DLLs, the license, and installation instructions. Package restore uses the BepInEx and NuGet.org feeds in `config/NuGet.Steam.Config`; the first build requires internet access and can take longer to generate references. The script writes the release into this repository's ignored `dist/` folder, and the build tools use normal .NET/NuGet caches. It does not modify a game installation or upload anything. Compilation failure stops packaging.
+The script creates `dist/Steam/AmongUsAntiCheatMod-v0.3.0-Steam.zip` with both DLLs, the license, and installation instructions. Package restore uses the BepInEx and NuGet.org feeds in `config/NuGet.Steam.Config`; the first build requires internet access and can take longer to generate references. The script writes the release into this repository's ignored `dist/` folder, and the build tools use normal .NET/NuGet caches. It does not modify a game installation or upload anything. Compilation failure stops packaging.
 
 If PowerShell reports that scripts are disabled, this command allows local scripts for this process only, without changing your saved execution policy:
 
@@ -200,7 +215,7 @@ To package the shared Windows API build as an explicitly unverified Epic compati
 .\scripts\Build-Release.ps1 -Store EpicGames
 ```
 
-This creates `dist/EpicGames/AmongUsAntiCheatMod-v0.2.0-EpicGames.zip`. It uses the existing Steam package target and includes the reference source and Epic verification limits in `INSTALL.txt`. No Epic-specific package or local Epic installation was available here. This command does not turn Steam references into Epic references.
+This creates `dist/EpicGames/AmongUsAntiCheatMod-v0.3.0-EpicGames.zip`. It uses the existing Steam package target and includes the reference source and Epic verification limits in `INSTALL.txt`. No Epic-specific package or local Epic installation was available here. This command does not turn Steam references into Epic references.
 
 For a build compiled against Epic's actual generated assemblies, install the matching BepInEx loader in the Epic game folder, launch once, close the game, and run:
 
@@ -229,6 +244,10 @@ KickOnDetection = false
 
 [Movement]
 MaximumWorldUnitsPerSecond = 12
+
+[Sabotage]
+MonitorDuringMeetings = true
+BlockDuringMeetingsAsHost = true
 ```
 
 The limit is in Unity world units per second, **not** the lobby's player-speed multiplier. The conservative default tolerates ordinary movement; it can miss slower speed cheats. Adjust upward for higher speeds/custom roles. Configuration is loaded on startup. Alerts use player IDs and owner IDs rather than player names.
@@ -243,7 +262,7 @@ Test normal walking, venting, ladders, platforms, meetings, round transitions, a
 dotnet run --project tests/AntiCheat.Checks/AntiCheat.Checks.csproj -c Release
 ```
 
-This dependency-free check executable covers normal movement, sustained excessive movement, grace periods, transition exemptions, delayed samples, invalid coordinates, and state reset. It does not require Among Us.
+This dependency-free check executable covers normal movement, sustained excessive movement, grace periods, transition exemptions, delayed samples, invalid coordinates, sabotage start/repair classification, meeting-state transitions, and state resets. It does not require Among Us. The 513 checks exercise the core logic; they do not replace testing the Unity hooks in-game.
 
 The integration follows the BepInEx IL2CPP `BasePlugin` and Harmony pattern used by [Reactor](https://github.com/NuclearPowered/Reactor/blob/master/Reactor/ReactorPlugin.cs). Reactor itself is not a dependency.
 

@@ -32,4 +32,6 @@ Check(recovery.Observe(1, 200, 0, 2, 3, false) == null, "legal sample clears str
 recovery.Clear();
 Check(recovery.Observe(1, 900, 0, 3, 3, false) == null, "new round resets state");
 Check(recovery.Observe(2, 900, 0, 3, 3, false) == null, "separate player baseline");
+checks += MeetingSabotageChecks.Run();
+checks += SabotageRequestChecks.Run();
 Console.WriteLine($"All {checks} checks passed.");
