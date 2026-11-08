@@ -34,4 +34,5 @@ Check(recovery.Observe(1, 900, 0, 3, 3, false) == null, "new round resets state"
 Check(recovery.Observe(2, 900, 0, 3, 3, false) == null, "separate player baseline");
 checks += MeetingSabotageChecks.Run();
 checks += SabotageRequestChecks.Run();
+checks += ReleaseUpdateChecks.Run();
 Console.WriteLine($"All {checks} checks passed.");

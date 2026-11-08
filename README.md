@@ -233,6 +233,12 @@ For each edition, verify plugin loading, the panel in a lobby, guest and host mo
 
 ## Configuration
 
+### Optional update notifications at Windows sign-in
+
+An optional companion can notify you of a newer release when you start your computer and sign in. It opens the GitHub download page only if you choose **Yes**; updates are installed manually. Setup and disable instructions are in [Windows update notifications](docs/UPDATE-NOTIFICATIONS.md). The notifier is a separate download prepared locally; the existing game-mod ZIPs do not register startup checks.
+
+### Mod settings
+
 After the first launch, close the game and edit `BepInEx/config/local.amongus.anticheat.cfg`:
 
 ```ini
@@ -262,7 +268,7 @@ Test normal walking, venting, ladders, platforms, meetings, round transitions, a
 dotnet run --project tests/AntiCheat.Checks/AntiCheat.Checks.csproj -c Release
 ```
 
-This dependency-free check executable covers normal movement, sustained excessive movement, grace periods, transition exemptions, delayed samples, invalid coordinates, sabotage start/repair classification, meeting-state transitions, and state resets. It does not require Among Us. The 513 checks exercise the core logic; they do not replace testing the Unity hooks in-game.
+This dependency-free check executable covers normal movement, sustained excessive movement, grace periods, transition exemptions, delayed samples, invalid coordinates, sabotage start/repair classification, meeting-state transitions, state resets, and update-version selection. It does not require Among Us. The 624 checks exercise the core logic; they do not replace testing the Unity hooks in-game.
 
 The integration follows the BepInEx IL2CPP `BasePlugin` and Harmony pattern used by [Reactor](https://github.com/NuclearPowered/Reactor/blob/master/Reactor/ReactorPlugin.cs). Reactor itself is not a dependency.
 
