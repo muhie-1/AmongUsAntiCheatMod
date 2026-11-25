@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace AntiCheat.Plugin;
 
-[BepInPlugin("local.amongus.anticheat", "Among Us Anti Cheat", "0.3.0")]
+[BepInPlugin("local.amongus.anticheat", "Among Us Anti Cheat", "0.4.0")]
 public sealed partial class Plugin : BasePlugin
 {
     internal static Plugin Instance = null!;
@@ -36,9 +36,29 @@ public sealed partial class Plugin : BasePlugin
         speed = Config.Bind("Movement", "MaximumWorldUnitsPerSecond", 12f,
             new ConfigDescription("Allowed speed including all lobby/role speed modifiers. Raise for custom roles or fast lobbies.", new AcceptableValueRange<float>(1f, 100f)));
         ConfigureProtection();
-        harmony.PatchAll();
+        ConfigureRpcProtection();
+        ApplyPatches();
         overlay = AddComponent<AntiCheatOverlay>();
-        Log.LogInfo("Anti Cheat loaded. Movement monitoring and meeting sabotage protection enabled by default.");
+        Log.LogInfo(unavailablePatches == 0
+            ? "Anti Cheat loaded. Movement, meeting sabotage and RPC checks enabled by default."
+            : $"Anti Cheat loaded with {unavailablePatches} unavailable game hook(s). The game version may be unsupported.");
+    }
+
+    private int unavailablePatches;
+
+    // Patch each hook separately so one changed game method disables only its own check.
+    private void ApplyPatches()
+    {
+        foreach (var type in AccessTools.GetTypesFromAssembly(typeof(Plugin).Assembly))
+        {
+            if (type.GetCustomAttributes(typeof(HarmonyPatch), false).Length == 0) continue;
+            try { harmony.CreateClassProcessor(type).Patch(); }
+            catch (Exception error)
+            {
+                unavailablePatches++;
+                Log.LogError($"Game hook {type.Name} unavailable; its check is off. Check game compatibility: {error.Message}");
+            }
+        }
     }
 
     internal void Observe(PlayerControl player)
@@ -63,9 +83,9 @@ public sealed partial class Plugin : BasePlugin
             var alert = detector.Observe(player.PlayerId, position.x, position.y,
                 clock.Elapsed.TotalSeconds, speed.Value, exempt);
             if (alert == null) return;
-            lastAlert = $"Player ID {player.PlayerId}: suspicious movement (unconfirmed)";
+            lastAlert = $"{Describe(player)}: suspicious movement (unconfirmed)";
             alertUntil = clock.Elapsed.TotalSeconds + 12;
-            Log.LogWarning($"Player ID {player.PlayerId}, owner {player.OwnerId}: {alert}");
+            Log.LogWarning($"{Describe(player)}, owner {player.OwnerId}: {alert}");
             if (kick.Value && !player.AmOwner && client.AmHost)
             {
                 client.KickPlayer(player.OwnerId, false);
@@ -94,11 +114,13 @@ public sealed partial class Plugin : BasePlugin
             (protectionFailed ? "sabotage checks stopped" : !monitorMeetingSabotage.Value ? "sabotage checks off" :
             client.AmHost && blockMeetingSabotage.Value ? "sabotage guard active" : "watching sabotage");
         else status = client.AmHost ? "Monitoring | Host" : "Monitoring | Guest (local warnings only)";
+        if (unavailablePatches > 0)
+            status += $"\n{unavailablePatches} game hook(s) unavailable: some checks off";
         if (enabled.Value && !failed && clock.Elapsed.TotalSeconds < alertUntil && lastAlert.Length > 0)
             status += "\n" + lastAlert;
         if (enabled.Value && clock.Elapsed.TotalSeconds < protectionNoticeUntil)
             status += "\n" + protectionNotice;
-        GUI.Box(new Rect(12, 12, Math.Min(580, Screen.width - 24), 108), "Anti Cheat\n" + status);
+        GUI.Box(new Rect(12, 12, Math.Min(580, Screen.width - 24), 124), "Anti Cheat\n" + status);
     }
 
     public override bool Unload()

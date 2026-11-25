@@ -35,4 +35,5 @@ Check(recovery.Observe(2, 900, 0, 3, 3, false) == null, "separate player baselin
 checks += MeetingSabotageChecks.Run();
 checks += SabotageRequestChecks.Run();
 checks += ReleaseUpdateChecks.Run();
+checks += RpcGuardChecks.Run();
 Console.WriteLine($"All {checks} checks passed.");

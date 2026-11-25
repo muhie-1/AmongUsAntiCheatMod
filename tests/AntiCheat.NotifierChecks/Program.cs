@@ -104,8 +104,8 @@ Check(ReleaseChecker.ReleaseUrl("v0.4.0") == "https://github.com/muhie-1/AmongUs
 string pluginPath = args.Length > 0 ? Path.GetFullPath(args[0]) : Path.GetFullPath(Path.Combine(
     AppContext.BaseDirectory, "../../../../../src/AntiCheat.Plugin/bin/Release/net6.0/AmongUs.AntiCheat.dll"));
 if (!File.Exists(pluginPath)) throw new FileNotFoundException("Build the mod first, or provide its DLL as the first argument.", pluginPath);
-Check(InstalledPluginVersion.Read(pluginPath) == "0.3.0", "Actual plugin metadata declares installed version 0.3.0");
-Check(InstalledPluginVersion.TryRead(pluginPath, out string? declaredVersion) && declaredVersion == "0.3.0",
+Check(InstalledPluginVersion.Read(pluginPath) == "0.4.0", "Actual plugin metadata declares installed version 0.4.0");
+Check(InstalledPluginVersion.TryRead(pluginPath, out string? declaredVersion) && declaredVersion == "0.4.0",
     "TryRead reads actual installed plugin version");
 Check(InstalledPluginVersion.Read(typeof(ReleaseVersion).Assembly.Location) == null, "Core DLL is not mistaken for a plugin");
 Check(InstalledPluginVersion.Read(typeof(InstalledPluginVersion).Assembly.Location) == null, "Notifier DLL is not mistaken for a plugin");

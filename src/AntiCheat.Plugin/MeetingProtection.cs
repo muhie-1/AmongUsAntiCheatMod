@@ -62,6 +62,7 @@ public sealed partial class Plugin
         protectionNotice = "";
         protectionNoticeUntil = 0;
         detector.Clear();
+        ResetRpcProtection();
         lastAlert = "";
     }
 
